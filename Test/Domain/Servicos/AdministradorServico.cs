@@ -26,12 +26,11 @@ public class AdministradorServicoTest
     }
 
     [TestMethod]
-    public void TestandoSalvarAdminitrador()
+    public void TestandoSalvarAdministrador()
     {
-        // Arrange
         var context = CriarContextoDeTeste();
-        context.Database.ExecuteSqlRaw("DELETE FROM Administradores");
-        context.Database.ExecuteSqlRaw("ALTER TABLE Administradores AUTO_INCREMENT = 1");
+
+        context.Database.ExecuteSqlRaw("TRUNCATE TABLE Administradores");
 
         var adm = new Administrador
         {
@@ -42,12 +41,15 @@ public class AdministradorServicoTest
 
         var administradorServico = new AdministradorServico(context);
 
-        // Act
         administradorServico.Incluir(adm);
 
-        // Assert
-        Assert.AreEqual(1, administradorServico.Todos(1).Count());
+        var total = administradorServico.Todos(1).Count();
+
+        Assert.AreEqual(1, total);
     }
+
+
+
 
     [TestMethod]
     public void TestandoBuscaPorId()
@@ -65,10 +67,12 @@ public class AdministradorServicoTest
 
         // Act
         administradorServico.Incluir(adm);
-        var admDoBanco = administradorServico.BuscaPorid(adm.Id);
+        var idGerado = adm.Id;  
+        var admDoBanco = administradorServico.BuscaPorid(idGerado);
 
         // Assert
-        Assert.AreEqual(1, admDoBanco.Id);
+        Assert.IsNotNull(admDoBanco);
+        Assert.AreEqual(idGerado, admDoBanco.Id);
     }
 }
 
